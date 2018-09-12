@@ -1,0 +1,21 @@
+service: guestbook
+
+provider:
+  name: kubeless
+  runtime: nodejs6
+  defaultDNSResolution: 'xip.io'
+
+plugins:
+  - serverless-kubeless
+
+functions:
+  create:
+    handler: create.create
+    events:
+      - http:
+          path: /create
+  list:
+    handler: list.list
+    events:
+      - http:
+          path: /list

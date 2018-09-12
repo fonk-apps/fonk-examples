@@ -1,0 +1,9 @@
+provider:
+  name: faas
+  gateway: http://<master node ip>:31112
+
+functions:
+  create:
+    lang: node
+    handler: ./create
+    image: <image repo username>/create

@@ -1,0 +1,13 @@
+{
+  "name": "Guestbook",
+  "version": "0.1.0",
+  "description": "Guestbook service built with Kubeless and Serverless",
+  "dependencies": {
+    "lodash": "^4.17.4",
+    "mongodb": "^2.2.30",
+    "uuid": "^2.0.3"
+  },
+  "devDependencies": {
+    "serverless-kubeless": "^0.4.0"
+  }
+}

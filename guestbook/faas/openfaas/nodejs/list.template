@@ -1,0 +1,9 @@
+provider:
+  name: faas
+  gateway: http://<master node ip>:31112
+
+functions:
+  list:
+    lang: node8-express
+    handler: ./list
+    image: <image repo username>/list

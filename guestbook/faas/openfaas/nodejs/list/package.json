@@ -1,0 +1,8 @@
+{
+  "name": "Guestbook",
+  "version": "0.1.0",
+  "description": "Guestbook service built with OpenFaaS",
+  "dependencies": {
+    "mongodb": "^2.2.30"
+  }
+}
