@@ -108,7 +108,7 @@ Depending upon your cluster, the OpenWhisk install can take roughly up to 10-15 
 
 Keep in mind that the default OpenWhisk installation does not install certificates, so each `wsk` command you use when verifying your installation should use the `-i` switch and when you use `curl` against any API endpoints you create, you'll need to use the `--insecure` switch.
 
-To verify your OpenWhisk installation, put the following into a `greetings.js` file:
+To verify your OpenWhisk installation, put the following into a `greeting.js` file:
 
 ```js
 /**
