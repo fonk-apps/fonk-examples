@@ -1,6 +1,6 @@
-# Fission.io FONK Guestbook (Python)
+# Fission FONK Guestbook (Python)
 
-This folder contains a version of the FONK Guestbook application written in Python using Fission.io.  Instructions below can be modified to run on any K8S cluster, with pointers provided to source material to help to that end.  The steps are as follows:
+This folder contains a version of the FONK Guestbook application written in Python using Fission.  Instructions below can be modified to run on any Kubernetes (aka k8s) cluster, with pointers provided to source material to help to that end.  The steps are as follows:
 
 * Creating an environment
 * Creating a package
@@ -8,9 +8,9 @@ This folder contains a version of the FONK Guestbook application written in Pyth
 * Adding a route and testing your API with `curl`
 
 ## Creating an environment
-Fission.io has the notion of [environments](https://docs.fission.io/0.9.2/usage/package/) within which functions run.  More or less, an environment is based on a container image and when an environment is created, Fission.io will manage a pool of containers based on that image within which functions can be injected.
+[Fission](http://fission.io) has the notion of [environments](https://docs.fission.io/0.9.2/usage/package/) within which functions run.  More or less, an environment is based on a container image and when an environment is created, Fission will manage a pool of containers based on that image within which functions can be injected.
 
-For certain languages, an image upon which an environment is based can be used to as a build facility a function as well where external libraries or packages are managed.
+For certain languages, an image, upon which an environment is based, can be used as a build facility for a function. This image is also where external libraries, or packages, are managed.
 
 To create a fresh Python environment capable of building functions:
 
@@ -26,9 +26,9 @@ pythonsrc 670169f2-9ff3-11e8-8b2a-005056a340a6 fission/python-env:latest 3      
 ```
 
 ## Creating a package
-Languages like Python that use distributed packaging systems to resolve dependencies need to be bundled in a way that Fission.io can build the functions with dependencies correctly.
+Languages like Python, that use distributed packaging systems to resolve dependencies, need to be bundled in a way that Fission can build the functions with dependencies correctly.
 
-First, create a zip file for the function, which contains a `requirements.txt` file provided that lists dependencies, a `build.sh` file provided that executes the build, and a file with the function code:
+First, create a zip file for the function, which contains a `requirements.txt` file that lists dependencies, a `build.sh` file that executes the build, and a file with the function code:
 
 ```bash
 $ zip -jr create-pkg.zip create/
@@ -85,7 +85,7 @@ Installing collected packages: pymongo
     Running setup.py install for pymongo: finished with status 'done'
 Successfully installed pymongo-3.7.1
 ```
-If errors are seen here, try the build a second time as sometimes network hiccups cause issues pulling down libraries.
+If errors are seen here, try the build a second time, as sometimes network hiccups cause issues pulling down libraries.
 
 ## Deploying the functions
 Now packaged and built, the functions are ready to be deployed:
@@ -122,7 +122,7 @@ $ fission function test --name list
 ```
 
 ## Adding a route and testing your API with `curl`
-Fission has the facility to add routes to trigger function invocations independent from the deployed functions themselves.  To add routes for the two functions used in this example:
+Fission has the facility to add routes, to trigger function invocations independent from the deployed functions themselves.  To add routes for the two functions used in this example:
 
 ```bash
 $ fission route create --method POST --url /create --function create
@@ -135,7 +135,7 @@ trigger '18b206b5-b3fb-4399-b397-2f544b6a2b7b' created
 ```
 
 
-The functions can now be triggered in one of two ways, either using the IP address of the cluster master or the IP address of the Fission router service.  To see which is appropriate, look at the status of the Fission services:
+The functions can now be triggered in one of two ways: either using the IP address of the cluster master, or the IP address of the Fission router service.  To see which is appropriate, look at the status of the Fission services:
 
 ```bash
 $ kubectl get services -n fission
@@ -179,7 +179,7 @@ $ curl http://10.10.20.202:32746/list
   ]
 }
 ```
-The API endpoints tested are now tested, but one more step is required to handle the CORS header for the `create` API.  JavaScript running in browsers will make a preflight `OPTIONS` verb call prior to making a `POST`.  The code in `create/create.py` can handle this situation, but a route must be created for it:
+The API endpoints are now tested, but one more step is required to handle the CORS header for the `create` API.  JavaScript running in browsers will make a preflight `OPTIONS` verb call prior to making a `POST`.  The code in `create/create.py` can handle this situation, but a route must be created for it:
 
 ```bash
 $ fission route create --method OPTIONS --url /create --function create
