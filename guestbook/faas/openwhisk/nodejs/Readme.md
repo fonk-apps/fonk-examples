@@ -27,7 +27,7 @@ cd ..
 ```
 
 ## Deploying the functions
-OpenWhisk executes functions in such a way that they do not have any K8S context and therefore cannot take advantage of K8S naming conventions when accessing microservices running in other parts of the cluster, such as the MongoDB being used to store Guestbook data.  `fonkdb-mongodb.default:27017` will not work since that assumes K8S context, so the information about the Mongo host needs to be passed in another way.
+OpenWhisk executes functions in such a way that they do not have any Kubernetes (aka k8s) context and therefore cannot take advantage of k8s naming conventions when accessing microservices running in other parts of the cluster, such as the MongoDB being used to store Guestbook data.  `fonkdb-mongodb.default:27017` will not work since that assumes k8s context, so the information about the Mongo host needs to be passed in another way.
 
 OpenWhisk does not support environment variables, per se, but it does support default parameters. If you look at the code in either of our functions, found in `./create/index.js` or `./list/index.js` notice how the MongoDB connection is made:
 
@@ -41,7 +41,7 @@ MongoClient.connect(url, (err, db) => {
 });
 ```
 
- In this case, when deploying the functions a default parameter named `mongoHost` needs to be set to a MongoDB host string that will enable each function to connect to MongoDB without using K8S naming conventions.
+ In this case, when deploying the functions a default parameter named `mongoHost` needs to be set to a MongoDB host string that will enable each function to connect to MongoDB without using k8s naming conventions.
 
 To discover what to set `mongoHost` should be, start with:
 
@@ -51,13 +51,13 @@ NAME              TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)          
 fonkdb-mongodb   LoadBalancer   10.105.107.36   <pending>     27017:31073/TCP   32m
 ```
 
-When MongoDB was deployed, it was configured to utilize a `LoadBalancer` so that a host string could be constructed.  There are two ways to create the host string and your mileage may vary on each path depending up on the external IP address capabilities of your K8S cluster.
+When MongoDB was deployed, it was configured to utilize a `LoadBalancer` so that a host string could be constructed.  There are two ways to create the host string and your mileage may vary on each path depending up on the external IP address capabilities of your k8s cluster.
 
 In this example, the `CLUSTER-IP` is showing a private IP address and a pending `EXTERNAL-IP` address for what is likely a cluster not capable of generating an `EXTERNAL-IP`.
 
 If your cluster is capable of generating an `EXTERNAL-IP` and it is shown when executing the command above, your host string is simply `<EXTERNAL-IP>:27017`.
 
-If your cluster is not capable of generating an `EXTERNAL-IP`, see what port Mongo is mapped to (`31073` in the example above) and use `kubecltl cluster-info` to find your cluster master IP address.  The host string is then <cluster master IP>:<mapped port>.
+If your cluster is not capable of generating an `EXTERNAL-IP`, see what port Mongo is mapped to (`31073` in the example above) and use `kubecltl cluster-info` to find your cluster master IP address.  The host string is then `<cluster master IP>:<mapped port>`.
 
 With the functions now packaged and the MongoDB host string determined, the functions can be deployed using:
 
