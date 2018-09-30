@@ -95,7 +95,7 @@ $ curl -X POST --header "Content-Type:application/json" -d '{"text":"Hello Again
   "_id": "5b76f6c060ae0a00072bc655"
 }
 
-$ curl --insecure https://10.10.20.202:31001/api/v1/web/guest/default/list.jsn
+$ curl --insecure https://10.10.20.202:31001/api/v1/web/guest/default/list.json
 {
   "entries": [{
     "_id": "5b76ec2ad6827500052378f4",
