@@ -64,7 +64,7 @@ $ kubeless function call list
 But what about interacting with the functions through an API endpoint?  
 
 ## Fixing the ingress
-The nginx ingress has a configuration issue on some platforms that requires inspection and correction prior to confiuring the front end.  Start by inspecting the ingress:
+The nginx ingress has a configuration issue on some platforms that requires inspection and correction prior to configuring the front end.  Start by inspecting the ingress:
 
 ```bash
 $ kubectl get ingress
@@ -79,7 +79,7 @@ In order to fix this, use:
 kubectl edit ingress guestbook
 ```
 
-This will launch a `vi` session with the configuration being used by K8S to manage this ingress.  On the `host` line that lists the `*.xip.io` entry with the incorrect IP address, change it to reflect the correct IP address, which can be found in the `ingress:ip` entry at the end of the file.  After saving and exiting, you should now see:
+This will launch a `vi` session with the configuration being used by Kubernetes to manage this ingress.  On the `host` line that lists the `*.xip.io` entry with the incorrect IP address, change it to reflect the correct IP address, which can be found in the `ingress:ip` entry at the end of the file.  After saving and exiting, you should now see:
 
 ```bash
 $ kubectl get ingress
