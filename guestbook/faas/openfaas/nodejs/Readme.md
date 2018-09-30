@@ -9,10 +9,10 @@ This folder contains a version of the FONK Guestbook application written in Node
 ## Creating `create.yml` and `list.yml`
 In OpenFaaS, functions are defined using a .yml file format that describes where the OpenFaaS instance being used is located, where the function binary resides, and where the container image used to implement the function can be found.
 
-In this folder, there are two templates for the two back end Guestbook functions, `create.template` and `list.template`.  The first step is to edit each of these and save them as their .yml variants.  To do this, the master IP address of the K8S cluster running OpenFaaS is needed as is the username being used for the container image repo configured on your Docker command line.
+In this folder, there are two templates for the two back-end Guestbook functions, `create.template` and `list.template`.  The first step is to edit each of these and save them as their .yml variants.  To do this, the master IP address of the Kubernets cluster running OpenFaaS is needed, as is the username being used for the container image repo configured on your Docker command line.
 
 ## Building, Pushing, and Deploying the functions
-OpenFaaS pulls container images from a repo at deployment time after those images have been built and pushed to that repo.  While OpenFaaS hides the subsequent `Dockerfile` from the developer in its templating system, a local copy of Docker configured to talk to the repo in question is required before proceeding.
+OpenFaaS pulls container images from a repo at deployment time, after those images have been built and pushed to that repo.  While OpenFaaS hides the subsequent `Dockerfile` from the developer in its templating system, a local copy of Docker configured to talk to the repo in question is required before proceeding.
 
 With those prerequisites in place, and keeping in mind that Docker often requires `sudo` access, here are the three commands needed to build, push, and deploy a function to OpenFaas.  First, build the container image that houses the function.
 
@@ -41,6 +41,7 @@ Image: <username>/create built.
 [0] < Building create done.
 [0] worker done.
 ```
+
 Next, push that image to the repo:
 ```bash
 $ sudo faas-cli push -f create.yml
