@@ -57,7 +57,7 @@ In this example, the `CLUSTER-IP` is showing a private IP address and a pending 
 
 If your cluster is capable of generating an `EXTERNAL-IP` and it is shown when executing the command above, your host string is simply `<EXTERNAL-IP>:27017`.
 
-If your cluster is not capable of generating an `EXTERNAL-IP`, see what port Mongo is mapped to (`31073` in the example above) and use `kubecltl cluster-info` to find your cluster master IP address.  The host string is then `<cluster master IP>:<mapped port>`.
+If your cluster is not capable of generating an `EXTERNAL-IP`, see what port Mongo is mapped to (`31073` in the example above) and use `kubectl cluster-info` to find your cluster master IP address.  The host string is then `<cluster master IP>:<mapped port>`.
 
 With the functions now packaged and the MongoDB host string determined, the functions can be deployed using:
 
