@@ -4,6 +4,6 @@ provider:
 
 functions:
   create:
-    lang: node
+    lang: node8-express
     handler: ./create
     image: <image repo username>/create
