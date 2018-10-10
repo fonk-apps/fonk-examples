@@ -12,8 +12,8 @@ Most, but not all, components offer Helm installers once you get your Kubernerte
 ## Obtaining a Kubernetes Cluster
 The `K` in FONK stands for Kubernetes (cool kid acronym: *k8s*) and it's the platform used to schedule all other components.  You have a number of choices for k8s clusters that can run FONK examples:
 
-* Minikube - Where most people start to run a small K8S cluster on a laptop.  However, some FaaS runtimes have CPU and memory usage that makes deploying them on a laptop a less than optimal experience.  As such, we do not recommend using Minikube for FONK examples.
-* [Cisco Container Platform](https://devnetsandbox.cisco.com/RM/Diagram/Index/f8dbda33-0c6e-4c4d-9fea-73e4451d730c?diagramType=Topology) - DevNet, [Cisco's developer relations team](https://developer.cisco.com), offers a free 6 hour trial sandbox (extendable to a full week) of Cisco's on prem K8S solution.
+* Minikube - Where most people start to run a small k8s cluster on a laptop.  However, some FaaS runtimes have CPU and memory usage that makes deploying them on a laptop a less than optimal experience.  As such, we do not recommend using Minikube for FONK examples.
+* [Cisco Container Platform](https://devnetsandbox.cisco.com/RM/Diagram/Index/f8dbda33-0c6e-4c4d-9fea-73e4451d730c?diagramType=Topology) - DevNet, [Cisco's developer relations team](https://developer.cisco.com), offers a free 6 hour trial sandbox (extendable to a full week) of Cisco's on prem k8s solution.
 * [Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine/docs/quickstart) - Google's managed Kubernetes service, usage costs apply.
 * [Amazon Elastic Container Service for Kubernetes (EKS)](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) - Amazon's managed Kubernetes service, usage costs apply.
 * [Azure Kubernetes Service (AKS)](https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough) - Azure's managed Kubernetes service, usage costs apply.
@@ -73,7 +73,7 @@ Before the example code can be loaded into one of the FaaS runtimes, the chosen 
 ### Deploying OpenFaaS
 To deploy OpenFaaS on k8s, the [Helm chart instructions can be found on their faas-netes project](https://github.com/openfaas/faas-netes/blob/master/chart/openfaas/README.md).  Specifically, follow the "Deploy OpenFaaS" instructions, but other sections on that page are for advanced usage.
 
-On some K8S clusters, the `helm repo add openfaas https://openfaas.github.io/faas-netes/` will fail with a certificate error.  When that happens, you'll need to install from the `faas-netes` repo directly with:
+On some k8s clusters, the `helm repo add openfaas https://openfaas.github.io/faas-netes/` will fail with a certificate error.  When that happens, you'll need to install from the `faas-netes` repo directly with:
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/openfaas/faas-netes/master/namespaces.yml
