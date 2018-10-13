@@ -1,5 +1,7 @@
-createPath = ''; // Path to create API endpoint
-listPath = ''; // Path to list API endpoint
+// createPath = 'http://10.10.20.202:31112/function/create'; // OpenFaaS
+// listPath = 'http://10.10.20.202:31112/function/list'; // OpenFaaS
+createPath = 'http://10.10.20.202:32237/create'; // Fission
+listPath = 'http://10.10.20.202:32237/list'; // Fission
 
 // Make List call and render current lst
 function getAndRenderMsg() {

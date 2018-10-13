@@ -3,7 +3,7 @@ provider:
   gateway:  http://<master node ip>:31112
 
 functions:
-  create:
+  list:
     lang: python27-flask
     handler: ./list
     image: <image repo username>/list
