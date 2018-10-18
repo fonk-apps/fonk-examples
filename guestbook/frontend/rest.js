@@ -23,8 +23,7 @@ function getAndRenderMsg() {
   });
 }
 
-// Upon the submit buttong being created, make Create call, then List
-$('#submitEntry').on('click', function () {
+function createMsg() {
   var inputMessage = document.getElementById('inputMessage').value;
   console.log('inputMessage: ' + inputMessage);
   $.ajax({
@@ -40,6 +39,16 @@ $('#submitEntry').on('click', function () {
         getAndRenderMsg();
       },
     });
+}
+
+// Upon the submit buttong being created, make Create call, then List
+$('#submitEntry').on('click', function () {
+  createMsg();
+});
+
+$('#guestForm').submit(function(event){
+  event.preventDefault();
+  createMsg();
 });
 
 // Start the page load with the List call
