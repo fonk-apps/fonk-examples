@@ -25,7 +25,7 @@ def main():
                         "_id": str(ObjectId()),
                         "updatedAt": int(round(time.time() * 1000))}
                 id = collection.insert_one(data)
-                return response(data, 200)
+                return response(json.dumps(data,indent=2), 200)
             except Exception as err:
                 return response({"error": "Error: " + str(err)}, 500)
         else:
