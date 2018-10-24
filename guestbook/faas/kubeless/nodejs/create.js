@@ -3,7 +3,7 @@
 const mongodb = require('mongodb');
 
 const MongoClient = mongodb.MongoClient;
-const url = 'mongodb://fonkdb-mongodb.default:27017/guestbook_app';
+const url = 'mongodb://fonkdb-mongodb:27017/guestbook_app';
 
 module.exports = {
   create: (event, context) => new Promise((resolve, reject) => {

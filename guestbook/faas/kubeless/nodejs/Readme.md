@@ -101,3 +101,45 @@ $ curl http://35.233.180.47.xip.io/list
 ```
 
 With your API endpoints tested, [follow the instructions for configuring your front end.](../../../frontend/Readme.md)
+
+## Proxy
+
+You  might be behind a proxy in which case npm commands may fail.  This is because the runtime images need to have added dependencies and kubeless isn't able to get out to the internet to grab these dependencies.  If you see something like this after running ```serverless deploy```:  
+
+```
+create-857486667d-hvfqk           0/1       Init:1/2   1          14m
+list-cff8b67fd-lnjfz              0/1       Init:1/2   1          14m
+```
+
+To get around this you have a few options.  
+
+### Option 1: edit the deployment (recommended)
+
+This is the simplist method but relies upon you having to edit the kubernetes deployment for each function created.  
+
+By running: 
+
+```
+kubectl edit deployment list
+```
+
+search for the line that has ```npm```.  Add the proxy to this command line: 
+
+```
+> /tmp/deps.sha256 && sha256sum -c /tmp/deps.sha256 && npm config set https-proxy 
+          http://proxy.esl.cisco.com:80 && npm config set registry https://registry.npmjs.org
+          && npm install --production --prefix=/kubeless
+```
+Waiting a few minutes for the pods to grab the NPM updates will then make this pod stable. 
+
+### Option 2: custom images
+
+You could use a different runtime container that has the dependencies baked in.  You can modify the kubeless docker files for the runtimes by cloning the repository.  The runtime Docker images are found [here.](https://github.com/kubeless/kubeless/tree/master/docker/runtime)
+
+You would then add your function to each of these files so it could be called.  
+
+Then you would need to add these into the ```serverless.yaml``` configuration file: 
+
+```
+```
+
