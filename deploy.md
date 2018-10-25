@@ -44,7 +44,7 @@ Per [the MongoDB Helm chart](https://github.com/helm/charts/tree/master/stable/m
 
 To execute it:
 ```bash
-helm install stable/mongodb --name fonkdb --set service.type=LoadBalancer,persistence.enabled=false,usePassword=false
+$ helm install stable/mongodb --name fonkdb --set service.type=LoadBalancer,persistence.enabled=false,usePassword=false
 ```
 The result should be something similar to:
 

@@ -7,7 +7,7 @@ This folder contains a version of the FONK Guestbook application written in Node
 * Testing your API with `curl`
 
 ## Deploying the functions
-In order to simplify packaging for deployment, the [Serverless Framework](http://serverless.com) is used to deploy your functions onto Kubeless.  Before proceeding, be sure to [follow the installation instructions there.](https://serverless.com/framework/docs/providers/aws/guide/quick-start/).
+In order to simplify packaging for deployment, the [Serverless Framework](http://serverless.com) is used to deploy your functions onto Kubeless.  Before proceeding, be sure to [follow the installation instructions there.](https://serverless.com/framework/docs/providers/kubeless/guide/quick-start/).
 
 With the Serverless CLI installed, make sure all function dependencies are installed, including the Kubeless Serverless Plug-in, using:
 
