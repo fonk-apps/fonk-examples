@@ -22,10 +22,10 @@ def handle(req):
                 collection = client[MONGODB_NAME][MONGODB_COLLECTION]
                 request_data = json.loads(request.get_data(as_text=True))
                 data = {"text": request_data["text"],
-                        "_id": str(ObjectId()),
                         "updatedAt": int(round(time.time() * 1000))}
                 id = collection.insert_one(data)
-                return response(data, 200)
+                data["_id"] = str(data["_id"])
+                return response(json.dumps(data,indent=2), 200)
             except Exception as err:
                 return response({"error": "Error: " + str(err)}, 500)
         else:

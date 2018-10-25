@@ -14,6 +14,7 @@ def handle(req):
         collection = client[MONGODB_NAME][MONGODB_COLLECTION]
         entries = []
         for doc in collection.find({}):
+            doc["_id"] = str(doc["_id"])
             entries.append(doc)
         result = {"entries": entries}
         return response(json.dumps(result,indent=2), 200)
