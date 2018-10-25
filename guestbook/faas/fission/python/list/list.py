@@ -1,6 +1,7 @@
 import pymongo
 import json
 
+
 from flask import request, Flask, Response
 
 MONGODB_HOST = "fonkdb-mongodb.default"
@@ -14,9 +15,10 @@ def main():
         collection = client[MONGODB_NAME][MONGODB_COLLECTION]
         entries = []
         for doc in collection.find({}):
+            doc["_id"] = str(doc["_id"])
             entries.append(doc)
         result = {"entries": entries}
-        return response(json.dumps(result,indent=2), 200)
+        return response(json.dumps(result), 200)
     except pymongo.errors.PyMongoError as err:
         return response({"error": "MongoDB error: " + str(err)}, 500)
     except Exception as err:
