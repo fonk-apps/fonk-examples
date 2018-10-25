@@ -73,19 +73,33 @@ guestbook   35.233.239.77.xip.io   35.233.180.47   80        2m
 ```
 This example exhibits the configuration issue where the IP address under `HOSTS` does not match that under `ADDRESS`.  If the IP addresses match, no further configuration is required and you can skip the rest of this step.
 
-In order to fix this, use:
+If you are using Cisco Container Platform 1.5, CCP provides a load balancer that can be used as an ingress.  To find its IP address:
+
+```bash
+$ kubectl get svc -n ccp
+NAME                                        TYPE           CLUSTER-IP       EXTERNAL-IP    PORT(S)                      AGE
+ccp-efk-kibana                              ClusterIP      10.98.44.213     <none>         5601/TCP                     7m
+ccp-monitor-grafana                         ClusterIP      10.97.243.174    <none>         80/TCP                       7m
+ccp-monitor-prometheus-alertmanager         ClusterIP      10.103.198.176   <none>         80/TCP                       7m
+ccp-monitor-prometheus-kube-state-metrics   ClusterIP      None             <none>         80/TCP                       7m
+ccp-monitor-prometheus-node-exporter        ClusterIP      None             <none>         9100/TCP                     7m
+ccp-monitor-prometheus-pushgateway          ClusterIP      10.106.100.238   <none>         9091/TCP                     7m
+ccp-monitor-prometheus-server               ClusterIP      10.107.22.55     <none>         80/TCP                       7m
+elasticsearch-logging                       ClusterIP      10.101.248.33    <none>         9200/TCP                     7m
+kubernetes-dashboard                        ClusterIP      10.107.254.199   <none>         443/TCP                      7m
+nginx-ingress-controller                    LoadBalancer   10.105.21.140    10.10.20.209   80:32100/TCP,443:31192/TCP   7m
+nginx-ingress-default-backend               ClusterIP      10.102.7.165     <none>         80/TCP                       7m
+```
+In this example, the external IP address to use is `10.10.20.209`.
+
+Regardless of your situation, to fix this use:
 
 ```bash
 kubectl edit ingress guestbook
 ```
 
-This will launch a `vi` session with the configuration being used by Kubernetes to manage this ingress.  On the `host` line that lists the `*.xip.io` entry with the incorrect IP address, change it to reflect the correct IP address, which can be found in the `ingress:ip` entry at the end of the file.  After saving and exiting, you should now see:
+This will launch a `vi` session with the configuration being used by Kubernetes to manage this ingress.  On the `host` line that lists the `*.xip.io` entry with the incorrect IP address, change it to reflect the correct IP address, which can be found in the `ingress:ip` entry at the end of the file or using the CCP load balancer external IP address.  After saving and exiting, you should now see your changes with `kubectl get ingress`.
 
-```bash
-$ kubectl get ingress
-NAME        HOSTS                  ADDRESS         PORTS     AGE
-guestbook   35.233.180.47.xip.io   35.233.180.47   80        6m
-```
 Note that you may need to repeat this step each time you deploy the functions.
 
 ## Testing your API with `curl`
