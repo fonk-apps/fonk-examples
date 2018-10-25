@@ -1,0 +1,13 @@
+{
+  "name": "kubeless-python-guestbook",
+  "version": "1.0.0",
+  "description": "Sample Kubeless Python Guestbook backend service.",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "serverless-kubeless": "^0.4.0",
+    "kubernetes-client": "^3.10.1"
+  },
+  "main": "handler.py",
+  "author": "The FONK Authors",
+  "license": "Apache-2.0"
+}
