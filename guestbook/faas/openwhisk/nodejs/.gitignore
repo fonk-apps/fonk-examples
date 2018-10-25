@@ -1,3 +1,11 @@
 list/list.zip
 create/create.zip
 greeting.js
+# package directories
+node_modules
+jspm_packages
+serverless.yml
+package-lock.json
+
+# Serverless directories
+.serverless

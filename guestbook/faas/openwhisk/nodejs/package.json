@@ -1,0 +1,15 @@
+{
+  "name": "Guestbook",
+  "version": "1.0.0",
+  "description": "Sample OpenWhisk NodeJS serverless framework service.",
+  "keywords": [
+    "serverless",
+    "openwhisk"
+  ],
+  "dependencies": {
+    "mongodb": "^2.2.30"
+  },
+  "devDependencies": {
+    "serverless-openwhisk": ">=0.13.0"
+  }
+}

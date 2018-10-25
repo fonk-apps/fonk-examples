@@ -2,34 +2,17 @@
 
 This folder contains a version of the FONK Guestbook application written in Node.js using OpenWhisk. The steps to getting it running are as follows:
 
-* Packaging the functions
+* Creating `serverless.yml`
 * Deploying the functions
 * Testing your API with `curl`
 * Bypassing the SSL Certificate
 
-## Packaging the functions
-For Node.js, OpenWhisk can accept a .zip file that has all dependencies packaged within it needed for function execution.  To create the needed .zip file for the `create` function:
+## Creating `serverless.yml`
+In order to simplify packaging for deployment, the [Serverless Framework](http://serverless.com) is used to deploy your functions onto OpenWhisk.  Before proceeding, be sure to [follow the installation instructions there.](https://serverless.com/framework/docs/providers/openwhisk/guide/quick-start/).
 
-```bash
-cd create
-npm install
-zip -r create.zip *
-cd ..
-```
-
-Similarly, for the `list` function:
-
-```bash
-cd list
-npm install
-zip -r list.zip *
-cd ..
-```
-
-## Deploying the functions
 OpenWhisk executes functions in such a way that they do not have any Kubernetes (aka k8s) context and therefore cannot take advantage of k8s naming conventions when accessing microservices running in other parts of the cluster, such as the MongoDB being used to store Guestbook data.  `fonkdb-mongodb.default:27017` will not work since that assumes k8s context, so the information about the Mongo host needs to be passed in another way.
 
-OpenWhisk does not support environment variables, per se, but it does support default parameters. If you look at the code in either of our functions, found in `./create/index.js` or `./list/index.js` notice how the MongoDB connection is made:
+OpenWhisk does not support environment variables, per se, but it does support default parameters, which can be set in the `serverless.yml` file. If you look at the code in either of our functions, found in `./create.js` or `./list.js` notice how the MongoDB connection is made:
 
 ```js
 var url = 'mongodb://' + params.mongoHost + '/guestbook_app';
@@ -41,7 +24,7 @@ MongoClient.connect(url, (err, db) => {
 });
 ```
 
- In this case, when deploying the functions a default parameter named `mongoHost` needs to be set to a MongoDB host string that will enable each function to connect to MongoDB without using k8s naming conventions.
+In this case, when deploying the functions a default parameter named `mongoHost` needs to be set in `serverless.yml` to a MongoDB host string that will enable each function to connect to MongoDB without using k8s naming conventions.
 
 To discover what to set `mongoHost` should be, start with:
 
@@ -59,16 +42,14 @@ If your cluster is capable of generating an `EXTERNAL-IP` and it is shown when e
 
 If your cluster is not capable of generating an `EXTERNAL-IP`, see what port Mongo is mapped to (`31073` in the example above) and use `kubectl cluster-info` to find your cluster master IP address.  The host string is then `<cluster master IP>:<mapped port>`.
 
-With the functions now packaged and the MongoDB host string determined, the functions can be deployed using:
+Now go into `serverless.template` and notice the two places where this MongoDB host:port string should be set.  Insert your values and save your changes as `serverless.yml`.
+
+## Deploying the functions
+With the `serverless.yml` saved, the function dependencies can be installed and then the functions deployed using:
 
 ```bash
-wsk action create create ./create/create.zip --kind nodejs:default -i --web true --param mongoHost <host string>
-```
-
-and
-
-```bash
-wsk action create list ./list/list.zip --kind nodejs:default -i --web true --param mongoHost <host string>
+npm install
+serverless deploy -v
 ```
 
 With the functions now deployed on OpenWhisk, they can can be invoked using the `wsk` command line:
