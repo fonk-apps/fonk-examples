@@ -2,6 +2,7 @@ package kubeless
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/kubeless/kubeless/pkg/functions"
@@ -32,6 +33,26 @@ func dialMongo() (*mgo.Session, error) {
 // function to create a new entry.
 func Create(event functions.Event, context functions.Context) (string, error) {
 	return event.Data, nil
+	var e Entry
+	err := json.Unmarshal([]byte(event.Data), &e)
+	if err != nil {
+		return "", err
+	}
+	e.Id = bson.NewObjectIdWithTime(time.Now())
+	e.UpdatedAt = time.Now()
+	session, err := dialMongo()
+	if err != nil {
+		return "", err
+	}
+	collection := session.DB("guestbook_app").C("entries")
+	fmt.Println("Inserting...")
+	fmt.Println(e)
+	err = collection.Insert(e)
+	if err != nil {
+		return "", err
+	}
+	b, err := json.Marshal(e)
+	return string(b), err
 }
 
 // function to list the guestbook
