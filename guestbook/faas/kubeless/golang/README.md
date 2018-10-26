@@ -2,9 +2,34 @@
 
 This folder contains a version fo the FONK Guestbook application written in Go 1.10 using Kubeless. 
 
+* Update kubeless with a golang cors enabled runtime
 * Deploy the functions
 * Fix the proxy (if you are behind a proxy)
 * Test API with `curl`
+
+## Getting a CORS enabled image
+
+Kubeless doesn't support [cors](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) quit yet, but we have submitted a [PR](https://github.com/kubeless/kubeless/issues/934) to get this taken care of.  To make it work now, you just need to do a quick configuration change as is documented [in the kubeless documentation](https://kubeless.io/docs/runtimes/) on custom runtimes. 
+
+```
+kubectl edit -n kubeless configmap kubeless-config
+```
+
+Find the `go1.10` line and replace the images used with some fixed images: 
+
+```diff
+- "initImage: kubeless/go-init@sha256:983b3f06452321a2299588966817e724d1a9c24be76cf1b12c14843efcdff502",
++ "runtimeImage": "vallard/kubelessgo:1.10",
+```
+
+Kill the existing controller so it re-reads the configMap.  (Don't worry, all existing pods will still run and the pod will restart)
+
+```
+kubectl delete pods -n kubeless -l kubeless=controller
+```
+
+Now you have a cors enabled golang runtime!
+
 
 ## Deploying the functions
 
@@ -27,7 +52,7 @@ Serverless: Deploying function list...
 Serverless: Function list successfully deployed
 Serverless: Function create successfully deployed
 ```
-If your pods require a proxy configuration to access the internet to get the python dependencies see the proxy section below.  Note, that launching in golang seems to take a while since it is doing `dep ensure` and downloads dependency packages. 
+If your pods require a proxy configuration to access the internet to get the Golang Deps see the proxy section below.   
 
 Validate that the functions are deployed with:
 
@@ -49,7 +74,7 @@ svc/list             ClusterIP      10.11.241.224   <none>          8080/TCP    
 
 ```
 
-If you are unfamiliar with the Serverless Framework, take a look at the `serverless.yml` file.  There, the functions are defined for the two operations needed for Guestbook.  Both `create` and `list` use the code in `handler.py` to create and list entries in the Guestbook.
+If you are unfamiliar with the Serverless Framework, take a look at the `serverless.yml` file.  There, the functions are defined for the two operations needed for Guestbook.  Both `create` and `list` use the code in `guestbook.go` to create and list entries in the Guestbook.
 
 Kubeless deploys individual functions as pods that are always running (some other FaaS runtimes that treat functions as ephemeral) and fronts them with services.
 
@@ -65,65 +90,49 @@ $ kubeless function call list
 
 ## Proxy issues
 
-You can still do it with serverless but you would need to edit the deployment file after running `serverless deploy`.  This is done by doing: 
+If you are running behind a proxy then you can add the environment variables to the `serverless.yaml`.  An example is below: 
+
+```diff
+service: guestbook
+
+provider:
+  name: kubeless
+  hostname: '172.28.225.184.xip.io'
+  runtime: go1.10
+
+plugins:
+  - serverless-kubeless
+
+functions:
+  create:
+    handler: guestbook.Create
++    environment:
++      https_proxy: proxy.esl.cisco.com:80
+    events:
+      - http:
+          path: /create
+  list:
+    handler: guestbook.List
++   environment:
++      https_proxy: proxy.esl.cisco.com:80
+    events:
+      - http:
+          path: /list
 
 ```
-kubectl edit deployment list
-```
-
-search for the line that has ```dep ensure```.  Add the proxy to this command line: 
-
-```
-    - args:
-        - echo '144493f7cb03633804450b6eee3a40b30e0dd6b827986244070aa21129df97f0  /kubeless/Gopkg.toml'
-          > /tmp/deps.sha256 && sha256sum -c /tmp/deps.sha256 && cd $GOPATH/src/kubeless
-          && https_proxy=proxy.esl.cisco.com:80 dep ensure > /dev/termination-log
-          2>&1
-```
-
-There is an open [issue with Kubeless](https://github.com/kubeless/kubeless/issues/931#issuecomment-433242459) on this. 
-
-Unfortunately you have to do this anytime you do a `serverless deploy`. 
-
-
-
-
  
 
 ## Fixing the ingress
-The nginx ingress has a configuration issue on some platforms that requires inspection and correction prior to configuring the front end.  Start by inspecting the ingress:
+To ensure the correct ingress rule is instantiated add the `hostname` to your `serverless.yaml` file.  
 
-```bash
-$ kubectl get ingress
-NAME        HOSTS                  ADDRESS         PORTS     AGE
-guestbook   35.233.239.77.xip.io   35.233.180.47   80        2m
-```
-This example exhibits the configuration issue where the IP address under `HOSTS` does not match that under `ADDRESS`.  If the IP addresses match, no further configuration is required and you can skip the rest of this step.
-
-In order to fix this, use:
-
-```bash
-kubectl edit ingress guestbook
-```
-
-This will launch a `vi` session with the configuration being used by Kubernetes to manage this ingress.  On the `host` line that lists the `*.xip.io` entry with the incorrect IP address, change it to reflect the correct IP address, which can be found in the `ingress:ip` entry at the end of the file.  After saving and exiting, you should now see:
-
-```bash
-$ kubectl get ingress
-NAME        HOSTS                  ADDRESS         PORTS     AGE
-guestbook   35.233.180.47.xip.io   35.233.180.47   80        6m
-```
-Note that you may need to repeat this step each time you deploy the functions.
-
-Another option to fix this would be to add the `hostname` in the `serverless.yaml` file.  By adding: 
 
 ```
 provider:
   name: kubeless
   hostname: 35.233.180.47.xip.io
 ```
-You can ensure it uses the correct ingress service in the ingress rule. 
 
+Here the host `35.233.180.47` is our ingress controller.  Using `xip.io` redirects any external traffic to our localhost.  Works great!
 
 ## Testing your API with `curl`
 
@@ -138,30 +147,3 @@ $ curl http://35.233.180.47.xip.io/list
 ```
 
 With your API endpoints tested, [follow the instructions for configuring your front end.](../../../frontend/Readme.md)
-
-## Proxy
-
-
-This is the simplist method but relies upon you having to edit the kubernetes deployment for each function created.  
-
-
-
-```
-- args:
-        - echo 'a835951ae9bbd47f0b7304dbe44f576b42ac21b29a81f41d665c5f707b8a2200  /kubeless/requirements.txt'
-          > /tmp/deps.sha256 && sha256sum -c /tmp/deps.sha256 && https_proxy=proxy.esl.cisco.com:80
-          pip install --prefix=/kubeless -r /kubeless/requirements.txt
-```
-Waiting a few minutes for the pods to grab the pip  updates will then make this pod stable and finish. 
-
-## Development process cheatsheet
-
-```
-serverless deploy -f list -v
-serverless invoke -f list -l
-serverless logs -f list
-```
-
-```
-kubeless function ls
-```

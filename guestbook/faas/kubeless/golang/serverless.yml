@@ -2,7 +2,6 @@ service: guestbook
 
 provider:
   name: kubeless
-  hostname: '172.28.225.184.xip.io'
   runtime: go1.10
 
 plugins:
@@ -11,15 +10,11 @@ plugins:
 functions:
   create:
     handler: guestbook.Create
-    environment:
-      https_proxy: proxy.esl.cisco.com:80
     events:
       - http:
           path: /create
   list:
     handler: guestbook.List
-    environment:
-      https_proxy: proxy.esl.cisco.com:80
     events:
       - http:
           path: /list
