@@ -2,10 +2,21 @@
 
 This folder contains a version fo the FONK Guestbook application written in Python 2.7 using Kubeless.  It is derived from [this example](https://github.com/serverless/serverless-kubeless/tree/master/examples/todo-app/backend). The steps are as follows:
 
+* Update to a CORS enabled Runtime
 * Deploy the functions
 * Fix the proxy (if you are behind a proxy)
 * Fix the ingress
 * Test API with `curl`
+
+## Update to a CORS enabled runtime
+
+Kubeless doesn't support python [cors](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) quit yet, but we have submitted a [PR](https://github.com/kubeless/kubeless/issues/934) to get this taken care of.  To make it work now, you just need to do a quick configuration change as is documented [in the kubeless documentation](https://kubeless.io/docs/runtimes/) on custom runtimes.
+
+```
+kubectl edit -n kubeless configmap kubeless-config
+```
+
+###TODO WORK IN PROGRESS
 
 ## Deploying the functions
 
@@ -28,7 +39,7 @@ Serverless: Deploying function list...
 Serverless: Function list successfully deployed
 Serverless: Function create successfully deployed
 ```
-If your pods require a proxy configuration to access the internet to get the python dependencies see the proxy section below.
+If your pods require a proxy configuration to access the internet they may not come up.  To get the python dependencies see the proxy section below.
 
 Validate that the functions are deployed with:
 
@@ -66,39 +77,51 @@ $ kubeless function call list
 
 but what about interacting with the functions through an API endpoint? 
 
+## Proxy Issues
+
+If you are running behind a proxy then you can add the environment variables to the `serverless.yaml`.  An example is below:
+
+```diff
+service: guestbook
+
+provider:
+  name: kubeless
+  hostname: 172.28.225.184.xip.io
+  defaultDNSResolution: 'xip.io'
+  runtime: python2.7
+
+plugins:
+  - serverless-kubeless
+
+functions:
+  create:
+    handler: handler.create
++    environment:
++      https_proxy: proxy.esl.cisco.com:80
+    events:
+      - http:
+          path: /create
+
+  list:
+    handler: handler.list
++    environment:
++      https_proxy: proxy.esl.cisco.com:80
+    events:
+      - http:
+          path: /list
+```
+
 ## Fixing the ingress
-The nginx ingress has a configuration issue on some platforms that requires inspection and correction prior to configuring the front end.  Start by inspecting the ingress:
+To ensure the correct ingress rule is instantiated add the `hostname` to your `serverless.yaml` file.
 
-```bash
-$ kubectl get ingress
-NAME        HOSTS                  ADDRESS         PORTS     AGE
-guestbook   35.233.239.77.xip.io   35.233.180.47   80        2m
-```
-This example exhibits the configuration issue where the IP address under `HOSTS` does not match that under `ADDRESS`.  If the IP addresses match, no further configuration is required and you can skip the rest of this step.
-
-In order to fix this, use:
-
-```bash
-kubectl edit ingress guestbook
-```
-
-This will launch a `vi` session with the configuration being used by Kubernetes to manage this ingress.  On the `host` line that lists the `*.xip.io` entry with the incorrect IP address, change it to reflect the correct IP address, which can be found in the `ingress:ip` entry at the end of the file.  After saving and exiting, you should now see:
-
-```bash
-$ kubectl get ingress
-NAME        HOSTS                  ADDRESS         PORTS     AGE
-guestbook   35.233.180.47.xip.io   35.233.180.47   80        6m
-```
-Note that you may need to repeat this step each time you deploy the functions.
-
-Another option to fix this would be to add the `hostname` in the `serverless.yaml` file.  By adding: 
 
 ```
 provider:
   name: kubeless
   hostname: 35.233.180.47.xip.io
 ```
-You can ensure it uses the correct ingress service in the ingress rule. 
+
+Here the host `35.233.180.47` is our ingress controller.  Using `xip.io` redirects any external traffic to our localhost.  Works great! 
 
 
 ## Testing your API with `curl`
@@ -115,56 +138,3 @@ $ curl http://35.233.180.47.xip.io/list
 
 With your API endpoints tested, [follow the instructions for configuring your front end.](../../../frontend/Readme.md)
 
-## Proxy
-
-You  might be behind a proxy in which case npm commands may fail.  This is because the runtime images need to have added dependencies and kubeless isn't able to get out to the internet to grab these dependencies.  If you see something like this after running ```serverless deploy```:  
-
-```
-create-857486667d-hvfqk           0/1       Init:1/2   1          14m
-list-cff8b67fd-lnjfz              0/1       Init:1/2   1          14m
-```
-
-To get around this you have a few options.
-
-### Option 1: Use kubeless to deploy
-
-To deploy using kubeless instead of serverless run: 
-
-```
-kubeless function deploy list --env https_proxy=proxy.esl.cisco.com:80 --runtime python2.7 --from-file handler.py --handler handler.list --dependencies requirements.txt
-```
-
-```
-kubeless function deploy create --env https_proxy=proxy.esl.cisco.com:80 --runtime python2.7 --from-file handler.py --handler handler.create --dependencies requirements.txt
-```
-
-
-### Option 2: edit the deployment 
-
-Deploy with serverless as normal but edit the deployment files for `list` and `create`:
-
-```
-kubectl edit deployment list
-```
-
-search for the line that has ```pip```.  Add the proxy to this command line: 
-
-```
-- args:
-        - echo 'a835951ae9bbd47f0b7304dbe44f576b42ac21b29a81f41d665c5f707b8a2200  /kubeless/requirements.txt'
-          > /tmp/deps.sha256 && sha256sum -c /tmp/deps.sha256 && https_proxy=proxy.esl.cisco.com:80
-          pip install --prefix=/kubeless -r /kubeless/requirements.txt
-```
-Waiting a few minutes for the pods to grab the pip  updates will then make this pod stable and finish. 
-
-## Development process cheatsheet
-
-```
-serverless deploy -f list -v
-serverless invoke -f list -l
-serverless logs -f list
-```
-
-```
-kubeless function ls
-```

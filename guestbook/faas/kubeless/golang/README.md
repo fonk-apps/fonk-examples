@@ -9,7 +9,7 @@ This folder contains a version fo the FONK Guestbook application written in Go 1
 
 ## Getting a CORS enabled image
 
-Kubeless doesn't support [cors](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) quit yet, but we have submitted a [PR](https://github.com/kubeless/kubeless/issues/934) to get this taken care of.  To make it work now, you just need to do a quick configuration change as is documented [in the kubeless documentation](https://kubeless.io/docs/runtimes/) on custom runtimes. 
+Kubeless doesn't support [cors](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) in golang quit yet, but we have submitted a [PR](https://github.com/kubeless/kubeless/issues/934) to get this taken care of.  To make it work now, you just need to do a quick configuration change as is documented [in the kubeless documentation](https://kubeless.io/docs/runtimes/) on custom runtimes. 
 
 ```
 kubectl edit -n kubeless configmap kubeless-config
