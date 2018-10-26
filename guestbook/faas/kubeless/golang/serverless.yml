@@ -1,0 +1,21 @@
+service: guestbook
+
+provider:
+  name: kubeless
+  hostname: '172.28.225.184.xip.io'
+  runtime: go1.10
+
+plugins:
+  - serverless-kubeless
+
+functions:
+  create:
+    handler: guestbook.Create
+    events:
+      - http:
+          path: /create
+  list:
+    handler: guestbook.List
+    events:
+      - http:
+          path: /list
