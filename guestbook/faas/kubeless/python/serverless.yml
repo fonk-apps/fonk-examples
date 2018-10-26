@@ -12,12 +12,16 @@ plugins:
 functions:
   create:
     handler: handler.create
+    environment:
+      https_proxy: proxy.esl.cisco.com:80
     events:
       - http:
           path: /create
     
   list:
     handler: handler.list
+    environment:
+      https_proxy: proxy.esl.cisco.com:80
     events:
       - http:
           path: /list

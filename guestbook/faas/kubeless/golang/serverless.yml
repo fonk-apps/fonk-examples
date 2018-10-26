@@ -11,11 +11,15 @@ plugins:
 functions:
   create:
     handler: guestbook.Create
+    environment:
+      https_proxy: proxy.esl.cisco.com:80
     events:
       - http:
           path: /create
   list:
     handler: guestbook.List
+    environment:
+      https_proxy: proxy.esl.cisco.com:80
     events:
       - http:
           path: /list

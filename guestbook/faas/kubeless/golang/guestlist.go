@@ -21,7 +21,7 @@ func (t JSONTime) MarshalJSON() ([]byte, error) {
 
 type Entry struct {
 	Id        bson.ObjectId `bson:"_id,omitempty" json:"_id,omitempty"`
-	Text      string        `json:"text"`
+	Text      string        `json:"text" bson:"text"`
 	UpdatedAt time.Time     `json:"updatedAt,omitempty" bson:"updatedAt,omitempty"`
 }
 
@@ -32,13 +32,12 @@ func dialMongo() (*mgo.Session, error) {
 
 // function to create a new entry.
 func Create(event functions.Event, context functions.Context) (string, error) {
-	return event.Data, nil
 	var e Entry
 	err := json.Unmarshal([]byte(event.Data), &e)
 	if err != nil {
 		return "", err
 	}
-	e.Id = bson.NewObjectIdWithTime(time.Now())
+	e.Id = bson.NewObjectId()
 	e.UpdatedAt = time.Now()
 	session, err := dialMongo()
 	if err != nil {
@@ -49,7 +48,8 @@ func Create(event functions.Event, context functions.Context) (string, error) {
 	fmt.Println(e)
 	err = collection.Insert(e)
 	if err != nil {
-		return "", err
+		fmt.Println("Error Inserting...", err)
+		return "error inserting", err
 	}
 	b, err := json.Marshal(e)
 	return string(b), err

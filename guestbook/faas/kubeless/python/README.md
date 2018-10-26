@@ -124,13 +124,24 @@ create-857486667d-hvfqk           0/1       Init:1/2   1          14m
 list-cff8b67fd-lnjfz              0/1       Init:1/2   1          14m
 ```
 
-To get around this you have a few options.  
+To get around this you have a few options.
 
-### Option 1: edit the deployment (recommended)
+### Option 1: Use kubeless to deploy
 
-This is the simplist method but relies upon you having to edit the kubernetes deployment for each function created.  
+To deploy using kubeless instead of serverless run: 
 
-By running: 
+```
+kubeless function deploy list --env https_proxy=proxy.esl.cisco.com:80 --runtime python2.7 --from-file handler.py --handler handler.list --dependencies requirements.txt
+```
+
+```
+kubeless function deploy create --env https_proxy=proxy.esl.cisco.com:80 --runtime python2.7 --from-file handler.py --handler handler.create --dependencies requirements.txt
+```
+
+
+### Option 2: edit the deployment 
+
+Deploy with serverless as normal but edit the deployment files for `list` and `create`:
 
 ```
 kubectl edit deployment list

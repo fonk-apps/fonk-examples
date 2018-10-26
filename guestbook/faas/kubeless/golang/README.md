@@ -65,9 +65,7 @@ $ kubeless function call list
 
 ## Proxy issues
 
-If your pods require an internet proxy to get out you need to edit the deployment file.  This is done with 
-
-By running: 
+You can still do it with serverless but you would need to edit the deployment file after running `serverless deploy`.  This is done by doing: 
 
 ```
 kubectl edit deployment list
@@ -86,6 +84,10 @@ search for the line that has ```dep ensure```.  Add the proxy to this command li
 There is an open [issue with Kubeless](https://github.com/kubeless/kubeless/issues/931#issuecomment-433242459) on this. 
 
 Unfortunately you have to do this anytime you do a `serverless deploy`. 
+
+
+
+
  
 
 ## Fixing the ingress
