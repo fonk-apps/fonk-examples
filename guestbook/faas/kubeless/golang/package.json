@@ -1,0 +1,12 @@
+{
+  "name": "kubeless-golang-guestbook",
+  "version": "1.0.0",
+  "description": "Sample Kubeless Golang serverless framework service.",
+  "dependencies": {
+    "serverless-kubeless": "^0.4.0",
+    "kubernetes-client": "^3.10.1",
+    "bluebird": "^3.5.0"
+  },
+  "main": "guestbook.go",
+  "author": "The FONK Authors"
+}

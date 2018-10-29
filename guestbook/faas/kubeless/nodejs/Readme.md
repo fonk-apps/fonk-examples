@@ -27,6 +27,7 @@ Serverless: Function list successfully deployed
 Serverless: Function create successfully deployed
 ```
 
+
 Validate that the functions are deployed with:
 
 ```bash
@@ -102,6 +103,15 @@ This will launch a `vi` session with the configuration being used by Kubernetes 
 
 Note that you may need to repeat this step each time you deploy the functions.
 
+Another option to fix this would be to add the `hostname` in the `serverless.yaml` file.  By adding: 
+
+```
+provider:
+  name: kubeless
+  hostname: 35.233.180.47.xip.io
+```
+You can ensure it uses the correct ingress service in the ingress rule. 
+
 ## Testing your API with `curl`
 
 The functions are now reachable with `curl`:
@@ -115,3 +125,4 @@ $ curl http://35.233.180.47.xip.io/list
 ```
 
 With your API endpoints tested, [follow the instructions for configuring your front end.](../../../frontend/Readme.md)
+

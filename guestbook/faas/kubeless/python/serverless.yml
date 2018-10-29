@@ -1,0 +1,22 @@
+service: guestbook
+
+provider:
+  name: kubeless
+  defaultDNSResolution: 'xip.io'
+  runtime: python2.7
+
+plugins:
+  - serverless-kubeless
+
+functions:
+  create:
+    handler: handler.create
+    events:
+      - http:
+          path: /create
+    
+  list:
+    handler: handler.list
+    events:
+      - http:
+          path: /list

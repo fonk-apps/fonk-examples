@@ -1,0 +1,6 @@
+ignored = ["github.com/kubeless/kubeless/pkg/functions"]
+
+
+[[constraint]]
+  branch = "v2"
+  name = "gopkg.in/mgo.v2"
