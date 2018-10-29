@@ -10,13 +10,26 @@ This folder contains a version fo the FONK Guestbook application written in Pyth
 
 ## Update to a CORS enabled runtime
 
-Kubeless doesn't support python [cors](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) quit yet, but we have submitted a [PR](https://github.com/kubeless/kubeless/issues/934) to get this taken care of.  To make it work now, you just need to do a quick configuration change as is documented [in the kubeless documentation](https://kubeless.io/docs/runtimes/) on custom runtimes.
+Kubeless doesn't support python [cors](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) quite yet, but we have submitted a [PR](https://github.com/kubeless/kubeless/issues/934) to get this taken care of.  To make it work now, you just need to do a quick configuration change as is documented [in the kubeless documentation](https://kubeless.io/docs/runtimes/) on custom runtimes.  Run:
 
 ```
 kubectl edit -n kubeless configmap kubeless-config
 ```
 
-###TODO WORK IN PROGRESS
+This will bring up an editor.  We will change the python 2.7 image to a custom image: 
+
+```diff
+- "runtimeImage": "kubeless/python@sha256:07cfb0f3d8b6db045dc317d35d15634d7be5e436944c276bf37b1c630b03add8",
++ "runtimeImage": "vallard/kubeless-python:2.7",
+```
+
+Kill the existing controller so it re-reads the configMap. (Don't worry, all existing pods will still run and the pod will restart)
+
+```
+kubectl delete pods -n kubeless -l kubeless=controller
+```
+
+Now you have a cors enabled python runtime!
 
 ## Deploying the functions
 
