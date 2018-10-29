@@ -9,7 +9,7 @@ This folder contains a version fo the FONK Guestbook application written in Go 1
 
 ## Getting a CORS enabled image
 
-Kubeless doesn't support [cors](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) in golang quit yet, but we have submitted a [PR](https://github.com/kubeless/kubeless/issues/934) to get this taken care of.  To make it work now, you just need to do a quick configuration change as is documented [in the kubeless documentation](https://kubeless.io/docs/runtimes/) on custom runtimes. 
+Kubeless doesn't support [cors](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) in golang quite yet, but we have submitted a [PR](https://github.com/kubeless/kubeless/issues/934) to get this taken care of.  To make it work now, you just need to do a quick configuration change as is documented [in the kubeless documentation](https://kubeless.io/docs/runtimes/) on custom runtimes. 
 
 ```
 kubectl edit -n kubeless configmap kubeless-config
@@ -19,7 +19,7 @@ Find the `go1.10` line and replace the images used with some fixed images:
 
 ```diff
 - "initImage: kubeless/go-init@sha256:983b3f06452321a2299588966817e724d1a9c24be76cf1b12c14843efcdff502",
-+ "runtimeImage": "vallard/kubelessgo:1.10",
++ "initImage": "vallard/kubelessgo-init:1.10",
 ```
 
 Kill the existing controller so it re-reads the configMap.  (Don't worry, all existing pods will still run and the pod will restart)
