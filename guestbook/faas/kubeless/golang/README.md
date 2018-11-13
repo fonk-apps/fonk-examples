@@ -1,21 +1,22 @@
 # Kubeless FONK Guestbook (Golang)
 
-This folder contains a version fo the FONK Guestbook application written in Go 1.10 using Kubeless. 
+This folder contains a version fo the FONK Guestbook application written in Go 1.10 using Kubeless.
 
-* Update kubeless with a golang cors enabled runtime
+* Update to a CORS enabled runtime
 * Deploy the functions
-* Fix the proxy (if you are behind a proxy)
+* Proxy issues
+* Fixing the ingress
 * Test API with `curl`
 
-## Getting a CORS enabled image
+## Update to a CORS enabled runtime
 
-Kubeless doesn't support [cors](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) in golang quite yet, but we have submitted a [PR](https://github.com/kubeless/kubeless/issues/934) to get this taken care of.  To make it work now, you just need to do a quick configuration change as is documented [in the kubeless documentation](https://kubeless.io/docs/runtimes/) on custom runtimes. 
+Kubeless doesn't support [cors](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) in golang quite yet, but we have submitted a [PR](https://github.com/kubeless/kubeless/issues/934) to get this taken care of.  To make it work now, you just need to do a quick configuration change as is documented [in the kubeless documentation](https://kubeless.io/docs/runtimes/) on custom runtimes.
 
 ```
 kubectl edit -n kubeless configmap kubeless-config
 ```
 
-Find the `go1.10` line and replace the images used with some fixed images: 
+Find the `go1.10` line and replace the images used with some fixed images:
 
 ```diff
 - "initImage: kubeless/go-init@sha256:983b3f06452321a2299588966817e724d1a9c24be76cf1b12c14843efcdff502",
@@ -90,49 +91,11 @@ $ kubeless function call list
 
 ## Proxy issues
 
-If you are running behind a proxy then you can add the environment variables to the `serverless.yaml`.  An example is below: 
-
-```diff
-service: guestbook
-
-provider:
-  name: kubeless
-  hostname: '172.28.225.184.xip.io'
-  runtime: go1.10
-
-plugins:
-  - serverless-kubeless
-
-functions:
-  create:
-    handler: guestbook.Create
-+    environment:
-+      https_proxy: proxy.esl.cisco.com:80
-    events:
-      - http:
-          path: /create
-  list:
-    handler: guestbook.List
-+   environment:
-+      https_proxy: proxy.esl.cisco.com:80
-    events:
-      - http:
-          path: /list
-
-```
- 
+If you are running behind a firewall, see [Using Kubeless behind a firewall](../../../../kubeless-firewall.md).
 
 ## Fixing the ingress
-To ensure the correct ingress rule is instantiated add the `hostname` to your `serverless.yaml` file.  
 
-
-```
-provider:
-  name: kubeless
-  hostname: 35.233.180.47.xip.io
-```
-
-Here the host `35.233.180.47` is our ingress controller.  Using `xip.io` redirects any external traffic to our localhost.  Works great!
+See [Fixing Kubeless Ingress Issues](../../../../kubeless-ingress.md).
 
 ## Testing your API with `curl`
 
