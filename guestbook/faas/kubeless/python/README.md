@@ -4,7 +4,7 @@ This folder contains a version fo the FONK Guestbook application written in Pyth
 
 * Update to a CORS enabled Runtime
 * Deploy the functions
-* Fix the proxy (if you are behind a proxy)
+* Proxy Issues
 * Fix the ingress
 * Test API with `curl`
 
@@ -16,7 +16,7 @@ Kubeless doesn't support python [cors](https://developer.mozilla.org/en-US/docs/
 kubectl edit -n kubeless configmap kubeless-config
 ```
 
-This will bring up an editor.  We will change the python 2.7 image to a custom image: 
+This will bring up an editor.  We will change the python 2.7 image to a custom image:
 
 ```diff
 - "runtimeImage": "kubeless/python@sha256:07cfb0f3d8b6db045dc317d35d15634d7be5e436944c276bf37b1c630b03add8",
@@ -88,54 +88,15 @@ $ kubeless function call list
 {"entries":[{"_id":"5b89613ce59c6876fb34767e","text":"Hello World","updatedAt":1535729980939}]}
 ```
 
-but what about interacting with the functions through an API endpoint? 
+but what about interacting with the functions through an API endpoint?
 
-## Proxy Issues
+## Proxy issues
 
-If you are running behind a proxy then you can add the environment variables to the `serverless.yaml`.  An example is below:
-
-```diff
-service: guestbook
-
-provider:
-  name: kubeless
-  hostname: 172.28.225.184.xip.io
-  defaultDNSResolution: 'xip.io'
-  runtime: python2.7
-
-plugins:
-  - serverless-kubeless
-
-functions:
-  create:
-    handler: handler.create
-+    environment:
-+      https_proxy: proxy.esl.cisco.com:80
-    events:
-      - http:
-          path: /create
-
-  list:
-    handler: handler.list
-+    environment:
-+      https_proxy: proxy.esl.cisco.com:80
-    events:
-      - http:
-          path: /list
-```
+If you are running behind a firewall, see [Using Kubeless behind a firewall](../../../../kubeless-firewall.md).
 
 ## Fixing the ingress
-To ensure the correct ingress rule is instantiated add the `hostname` to your `serverless.yaml` file.
 
-
-```
-provider:
-  name: kubeless
-  hostname: 35.233.180.47.xip.io
-```
-
-Here the host `35.233.180.47` is our ingress controller.  Using `xip.io` redirects any external traffic to our localhost.  Works great! 
-
+See [Fixing Kubeless Ingress Issues](../../../../kubeless-ingress.md).
 
 ## Testing your API with `curl`
 
@@ -150,4 +111,3 @@ $ curl http://35.233.180.47.xip.io/list
 ```
 
 With your API endpoints tested, [follow the instructions for configuring your front end.](../../../frontend/Readme.md)
-
