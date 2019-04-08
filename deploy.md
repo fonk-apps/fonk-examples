@@ -71,16 +71,7 @@ In FONK, JavaScript gets loaded into a browser off of the object store, which th
 Before the example code can be loaded into one of the FaaS runtimes, the chosen runtime has to be deployed on k8s, but only one has to be chosen to run each example.  This section provides pointers to installation instructions with each FaaS runtime and offers tips where appropriate.
 
 ### Deploying OpenFaaS
-To deploy OpenFaaS on k8s, the [Helm chart instructions can be found on their faas-netes project](https://github.com/openfaas/faas-netes/blob/master/chart/openfaas/README.md).  Specifically, follow the "Deploy OpenFaaS" instructions, but other sections on that page are for advanced usage.
-
-On some k8s clusters, the `helm repo add openfaas https://openfaas.github.io/faas-netes/` will fail with a certificate error.  When that happens, you'll need to install from the `faas-netes` repo directly with:
-
-```bash
-kubectl apply -f https://raw.githubusercontent.com/openfaas/faas-netes/master/namespaces.yml
-git pull https://github.com/openfaas/faas-netes.git
-cd faas-netes/chart/openfaas
-helm install . --namespace openfaas --set functionNamespace=openfaas-fn
-```
+To deploy OpenFaaS on k8s, the [Helm chart instructions can be found on their faas-netes project](https://github.com/openfaas/faas-netes/blob/master/chart/openfaas/README.md).  Specifically, follow the "Deploy OpenFaaS" instructions, but use the IP address of your cluster instead of the loopback and proxy instructions.
 
 Separately, you'll need the [OpenFaaS CLI](https://github.com/openfaas/faas-cli), the "Get started: Install the CLI" section.
 
