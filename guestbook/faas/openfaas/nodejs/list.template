@@ -1,9 +1,9 @@
 provider:
-  name: faas
-  gateway: http://<master node ip>:31112
+  name: openfaas
+  gateway: http://<external_IP>:<port>
 
 functions:
   list:
     lang: node8-express
     handler: ./list
-    image: <image repo username>/list
+    image: <image_repo_username>/list
