@@ -4,7 +4,7 @@
   "description": "Guestbook service built with Kubeless and Serverless",
   "dependencies": {
     "lodash": "^4.17.4",
-    "mongodb": "^2.2.30",
+    "mongodb": "^3.6.1",
     "serverless": "^1.32.0",
     "uuid": "^2.0.3"
   },
