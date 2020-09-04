@@ -7,7 +7,7 @@
     "openwhisk"
   ],
   "dependencies": {
-    "mongodb": "^2.2.30"
+    "mongodb": "^3.6.1"
   },
   "devDependencies": {
     "serverless-openwhisk": ">=0.13.0"
